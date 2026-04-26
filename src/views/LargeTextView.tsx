@@ -10,6 +10,7 @@ import {
   X,
   Moon,
   Sun,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -974,13 +975,13 @@ export default function LargeTextView() {
                 {totalMatches} matches {searchType === "visible" ? "(Current View)" : "(All File)"}
               </Badge>
               <div className="flex-grow" />
-              <Button
-                variant="outline"
-                size="sm"
+              <Badge
+                variant="secondary"
                 onClick={clearSearch}
+                className="rounded-md bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-1"
               >
-                Clear
-              </Button>
+                <Trash2 className="h-4 w-4" />
+              </Badge>
             </div>
           </div>
 
