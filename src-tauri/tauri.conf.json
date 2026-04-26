@@ -65,7 +65,7 @@
         "height": 660,
         "resizable": true,
         "title": "Peek",
-        "dragDropEnabled": false,
+        "dragDropEnabled": true,
         "center": true,
         "decorations": true
       }

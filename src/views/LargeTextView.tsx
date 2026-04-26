@@ -75,6 +75,7 @@ export default function LargeTextView() {
   const [showLineInput, setShowLineInput] = useState(false);
   const [lineInputValue, setLineInputValue] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
   const loadedStartLineRef = useRef(0);
   const hasMoreLinesRef = useRef(true);
 
@@ -663,8 +664,56 @@ export default function LargeTextView() {
     };
   }, [showFloatingSearch, showReplaceFromMenu, showLineInput]);
 
+  // 监听Tauri的拖放事件
+  useEffect(() => {
+    const unlistenDragDrop = listen("tauri://drag-drop", async (event) => {
+      // 重置拖拽状态
+      setIsDragging(false);
+
+      const payload = event.payload as { paths?: string[]; position?: { x: number; y: number } };
+
+      if (payload.paths && payload.paths.length > 0) {
+        const filePath = payload.paths[0];
+        try {
+          await loadFileFromPath(filePath);
+        } catch (e) {
+          message(`打开文件失败: ${e}`, { type: "error" });
+        }
+      } else {
+        message('未能获取文件路径', { type: "error" });
+      }
+    });
+
+    const unlistenDragEnter = listen("tauri://drag-enter", () => {
+      setIsDragging(true);
+    });
+
+    const unlistenDragLeave = listen("tauri://drag-leave", () => {
+      setIsDragging(false);
+    });
+
+    // 清理事件监听
+    return () => {
+      unlistenDragDrop.then((fn) => fn());
+      unlistenDragEnter.then((fn) => fn());
+      unlistenDragLeave.then((fn) => fn());
+    };
+  }, []);
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
+      {/* 拖拽图标 */}
+      {isDragging && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 pointer-events-none">
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl flex flex-col items-center">
+            <FolderOpen className="h-16 w-16 text-gray-500 mb-4" />
+            <p className="text-lg font-medium text-gray-800 dark:text-gray-200">
+              释放文件以打开
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* 固定的菜单区域 */}
       <div className="flex items-center gap-1 p-1 border-b bg-gray-100 dark:bg-gray-800 z-10">
         <div className="relative">
