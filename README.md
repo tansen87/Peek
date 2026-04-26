@@ -2,6 +2,11 @@
 
 Peek 是一款高效的大文件文本查看器,基于Tauri构建,支持快速打开和浏览超大文本文件
 
+## 截图
+
+![light](./docs/img/light.png)
+![dark](./docs/img/dark.png)
+
 ## 功能特性
 
 ### 核心功能
